@@ -25,6 +25,11 @@ func (pc *personController) CreateOrderController(c *gin.Context) {
 	c.JSON(200, res)
 }
 
+func (pc *personController) DeleteOrderController(c *gin.Context) {
+	res := pc.ps.DeleteOrderService(c)
+	c.JSON(200, res)
+}
+
 func ProvidePersonController(ps services.OrderServiceApi) *personController {
 	return &personController{ps: ps}
 }

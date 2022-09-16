@@ -22,6 +22,7 @@ func main()  {
 
 	router.GET("/orders", orderController.GetPersonController)
 	router.POST("/orders", orderController.CreateOrderController)
+	router.DELETE("/orders/:order_id", orderController.DeleteOrderController)
 
 	router.Run(cfg.ServerPort)
 }

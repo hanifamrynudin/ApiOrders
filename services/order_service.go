@@ -14,6 +14,7 @@ type ServiceImpl struct {
 type OrderServiceApi interface {
 	GetOrderService(c *gin.Context) gin.H
 	CreateOrderService(c *gin.Context) gin.H
+	DeleteOrderService(c *gin.Context) gin.H
 }
 
 func (s ServiceImpl) GetOrderService(c *gin.Context) gin.H {
@@ -30,7 +31,7 @@ func (s ServiceImpl) GetOrderService(c *gin.Context) gin.H {
 func (s ServiceImpl) CreateOrderService(c *gin.Context) gin.H {
 
 	requestBody := models.OrderRequestBody{}
-	requestItemBody := models.ItemRequestBody{}
+	requestItemBody := []models.ItemRequestBody{}
 
 	c.BindJSON(&requestBody)
 	c.BindJSON(&requestItemBody)
@@ -41,6 +42,21 @@ func (s ServiceImpl) CreateOrderService(c *gin.Context) gin.H {
 	}
 	result := gin.H{
 		"result": res,
+	}
+	return result
+}
+
+
+func (s ServiceImpl) DeleteOrderService(c *gin.Context) gin.H {
+
+	order_id := c.Param("order_id")
+
+	err := s.rr.DeleteOrder(c, order_id)
+	if err != nil {
+		c.JSON(500, "internal server error")
+	}
+	result := gin.H{
+		"result": "successfully deleted data",
 	}
 	return result
 }
