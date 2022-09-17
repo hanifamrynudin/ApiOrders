@@ -15,6 +15,7 @@ type InDB struct {
 type OrderApi interface {
 	GetOrder(c *gin.Context) ([]models.Orders, error)
 	CreateOrder(c *gin.Context, requestBody models.OrderRequestBody, requestItemBody []models.ItemRequestBody) (models.Orders, error)
+	UpdateOrder(c *gin.Context, requestBody models.OrderRequestBody, requestItemBody []models.ItemRequestBody) (models.Orders, error)
 	DeleteOrder(c *gin.Context, id string) (error)
 }
 
@@ -52,6 +53,48 @@ func (idb *InDB) CreateOrder(c *gin.Context, requestBody models.OrderRequestBody
 				Item_Code: item.Item_Code, 
 				Description: item.Description, 
 				Quantity: item.Quantity}}}).Error
+
+	if err != nil {
+		log.Println("ERROR -> Invalid SQL Syntax")
+	}
+	return order, err
+}
+
+
+func (idb *InDB) UpdateOrder(c *gin.Context, requestBody models.OrderRequestBody, requestItemBody []models.ItemRequestBody) (models.Orders, error) {
+	var (
+		order models.Orders
+		item  models.Items
+		newOrder models.Orders
+		newItem  models.Items
+	)
+
+	order.Order_Id = requestBody.Order_Id
+	order.Customer_Name = requestBody.Customer_Name
+	order.Ordered_At = requestBody.Ordered_At
+
+	for i := range requestItemBody {
+		item.Item_Code = requestItemBody[i].Item_Code
+		item.Description = requestItemBody[i].Description
+		item.Quantity = requestItemBody[i].Quantity
+	}
+
+	err := idb.DB.First(&order, order.Order_Id).Error
+	if err != nil {
+		log.Println("ERROR -> Invalid SQL Syntax")
+	}
+
+	newOrder.Customer_Name = order.Customer_Name
+	newOrder.Ordered_At = order.Ordered_At
+
+	err = idb.DB.Model(&order).Updates(&models.Orders{
+		Customer_Name: newOrder.Customer_Name, 
+		Ordered_At: newOrder.Ordered_At, 
+		Items: []models.Items{
+			{
+				Item_Code: newItem.Item_Code, 
+				Description: newItem.Description, 
+				Quantity: newItem.Quantity}}}).Error
 
 	if err != nil {
 		log.Println("ERROR -> Invalid SQL Syntax")

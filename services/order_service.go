@@ -14,6 +14,7 @@ type ServiceImpl struct {
 type OrderServiceApi interface {
 	GetOrderService(c *gin.Context) gin.H
 	CreateOrderService(c *gin.Context) gin.H
+	UpdateOrderService(c *gin.Context) gin.H
 	DeleteOrderService(c *gin.Context) gin.H
 }
 
@@ -37,6 +38,24 @@ func (s ServiceImpl) CreateOrderService(c *gin.Context) gin.H {
 	c.BindJSON(&requestItemBody)
 
 	res, err := s.rr.CreateOrder(c, requestBody, requestItemBody)
+	if err != nil {
+		c.JSON(500, "internal server error")
+	}
+	result := gin.H{
+		"result": res,
+	}
+	return result
+}
+
+func (s ServiceImpl) UpdateOrderService(c *gin.Context) gin.H {
+
+	requestBody := models.OrderRequestBody{}
+	requestItemBody := []models.ItemRequestBody{}
+
+	c.BindJSON(&requestBody)
+	c.BindJSON(&requestItemBody)
+
+	res, err := s.rr.UpdateOrder(c, requestBody, requestItemBody)
 	if err != nil {
 		c.JSON(500, "internal server error")
 	}

@@ -22,12 +22,3 @@ type Items struct {
 	Quantity    uint
 	Order_Id    uint
 }
-
-type Person struct {
-	Firstname string
-	Lastname  string
-	Username  string
-	Phone     string
-	Email     string
-	UUID      string
-}
